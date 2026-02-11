@@ -1,0 +1,34 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="bg-white shadow overflow-hidden sm:rounded-lg">
+    <div class="px-4 py-5 sm:px-6">
+        <h3 class="text-lg leading-6 font-medium text-gray-900">{{ plan.title }}</h3>
+        <p class="mt-1 max-w-2xl text-sm text-gray-500">{{ plan.patient.full_name }}</p>
+    </div>
+    <div class="border-t border-gray-200 px-4 py-5 sm:px-6">
+        <dl class="grid grid-cols-1 gap-x-4 gap-y-8 sm:grid-cols-2">
+            <div>
+                <dt class="text-sm font-medium text-gray-500">Status</dt>
+                <dd class="mt-1 text-sm text-gray-900">{{ plan.get_status_display }}</dd>
+            </div>
+            <div>
+                <dt class="text-sm font-medium text-gray-500">Estimated Cost</dt>
+                <dd class="mt-1 text-sm text-gray-900">${{ plan.estimated_cost|floatformat:2|default:"-" }}</dd>
+            </div>
+            <div>
+                <dt class="text-sm font-medium text-gray-500">Sent</dt>
+                <dd class="mt-1 text-sm text-gray-900">{{ plan.sent_at|date:"M d, Y H:i"|default:"-" }}</dd>
+            </div>
+            <div>
+                <dt class="text-sm font-medium text-gray-500">Created By</dt>
+                <dd class="mt-1 text-sm text-gray-900">{{ plan.created_by|default:"-" }}</dd>
+            </div>
+            <div class="sm:col-span-2">
+                <dt class="text-sm font-medium text-gray-500">Description</dt>
+                <dd class="mt-1 text-sm text-gray-900">{{ plan.description|default:"-" }}</dd>
+            </div>
+        </dl>
+    </div>
+</div>
+{% endblock %}

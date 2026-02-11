@@ -1,0 +1,45 @@
+# Django core
+Django>=5.0,<5.1
+psycopg2-binary>=2.9.9
+python-dotenv>=1.0.0
+
+# Django REST Framework (for webhooks)
+djangorestframework>=3.14.0
+
+# Celery
+celery>=5.3.0
+redis>=5.0.0
+django-celery-beat>=2.5.0
+django-celery-results>=2.5.0
+
+# Static files
+whitenoise>=6.6.0
+
+# Database URL parsing (production)
+dj-database-url>=2.1.0
+
+# HTTP client for API integrations
+requests>=2.31.0
+
+# Twilio
+twilio>=8.10.0
+
+# Google APIs
+google-ads>=23.0.0
+google-analytics-data>=0.18.0
+google-auth>=2.25.0
+
+# Meta/Facebook
+facebook-business>=19.0.0
+
+# Security
+sentry-sdk>=1.38.0
+
+# Development
+django-debug-toolbar>=4.2.0
+pytest>=7.4.0
+pytest-django>=4.7.0
+pytest-cov>=4.1.0
+
+# Utilities
+python-dateutil>=2.8.2

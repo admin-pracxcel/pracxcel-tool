@@ -1,0 +1,39 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="bg-white shadow overflow-hidden sm:rounded-md">
+    <ul class="divide-y divide-gray-200">
+        {% for review in reviews %}
+        <li>
+            <a href="{% url 'operations:review_detail' review.id %}" class="block hover:bg-gray-50">
+                <div class="px-4 py-4 sm:px-6">
+                    <div class="flex items-center justify-between">
+                        <p class="text-sm font-medium text-indigo-600 truncate">
+                            {{ review.patient.full_name }}
+                        </p>
+                        <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full
+                            {% if review.status == 'completed' %}bg-green-100 text-green-800{% elif review.status == 'sent' %}bg-blue-100 text-blue-800{% else %}bg-gray-100 text-gray-800{% endif %}">
+                            {{ review.get_status_display }}
+                        </span>
+                    </div>
+                    <div class="mt-2 sm:flex sm:justify-between">
+                        <div class="sm:flex">
+                            <p class="flex items-center text-sm text-gray-500">
+                                {{ review.get_channel_display }}
+                            </p>
+                        </div>
+                        <div class="mt-2 flex items-center text-sm text-gray-500 sm:mt-0">
+                            Scheduled: {{ review.scheduled_at|date:"M d, Y H:i" }}
+                        </div>
+                    </div>
+                </div>
+            </a>
+        </li>
+        {% empty %}
+        <li class="px-4 py-12 text-center text-gray-500">
+            No review requests yet.
+        </li>
+        {% endfor %}
+    </ul>
+</div>
+{% endblock %}

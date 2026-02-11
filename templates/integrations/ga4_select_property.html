@@ -1,0 +1,72 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="max-w-lg mx-auto">
+    <div class="bg-white shadow sm:rounded-lg">
+        <div class="px-4 py-5 sm:p-6">
+            <h3 class="text-lg leading-6 font-medium text-gray-900">
+                Select GA4 Property
+            </h3>
+            <div class="mt-2 max-w-xl text-sm text-gray-500">
+                <p>Choose which Google Analytics 4 property to connect.</p>
+            </div>
+
+            <form class="mt-5" method="post">
+                {% csrf_token %}
+
+                <fieldset class="space-y-3">
+                    {% for prop in properties %}
+                    <label class="relative flex items-start p-3 border rounded-lg cursor-pointer hover:bg-gray-50 {% if forloop.first %}border-indigo-500 bg-indigo-50{% else %}border-gray-200{% endif %}">
+                        <div class="flex items-center h-5">
+                            <input type="radio" name="property_id" value="{{ prop.property_id }}"
+                                   class="h-4 w-4 text-indigo-600 border-gray-300 focus:ring-indigo-500"
+                                   {% if forloop.first %}checked{% endif %}
+                                   required>
+                        </div>
+                        <div class="ml-3 text-sm">
+                            <span class="font-medium text-gray-900">{{ prop.property_name }}</span>
+                            <input type="hidden" name="property_name" value="{{ prop.property_name }}" disabled>
+                            <p class="text-gray-500">{{ prop.account_name }} &middot; ID: {{ prop.property_id }}</p>
+                        </div>
+                    </label>
+                    {% endfor %}
+                </fieldset>
+
+                <div class="flex justify-between items-center mt-6">
+                    <a href="{% url 'integrations:integration_list' %}" class="text-sm text-gray-500 hover:text-gray-700">
+                        Cancel
+                    </a>
+                    <button type="submit" class="inline-flex justify-center py-2 px-4 border border-transparent shadow-sm text-sm font-medium rounded-md text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">
+                        Connect
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<script>
+// When a radio button changes, update visual highlighting
+document.querySelectorAll('input[name="property_id"]').forEach(function(radio) {
+    radio.addEventListener('change', function() {
+        document.querySelectorAll('fieldset label').forEach(function(label) {
+            label.classList.remove('border-indigo-500', 'bg-indigo-50');
+            label.classList.add('border-gray-200');
+        });
+        this.closest('label').classList.remove('border-gray-200');
+        this.closest('label').classList.add('border-indigo-500', 'bg-indigo-50');
+    });
+});
+
+// Enable the correct hidden property_name field on submit
+document.querySelector('form').addEventListener('submit', function() {
+    document.querySelectorAll('input[name="property_name"]').forEach(function(el) {
+        el.disabled = true;
+    });
+    var checked = document.querySelector('input[name="property_id"]:checked');
+    if (checked) {
+        checked.closest('label').querySelector('input[name="property_name"]').disabled = false;
+    }
+});
+</script>
+{% endblock %}

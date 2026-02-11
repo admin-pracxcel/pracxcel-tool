@@ -1,0 +1,28 @@
+{% for appointment in appointments %}
+<div class="flex space-x-3 py-4 border-b border-gray-100">
+    <div class="flex-shrink-0">
+        <span class="inline-flex items-center justify-center h-8 w-8 rounded-full bg-gray-100">
+            <svg class="h-4 w-4 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"></path>
+            </svg>
+        </span>
+    </div>
+    <div class="min-w-0 flex-1">
+        <p class="text-sm text-gray-900">{{ appointment.appointment_type|default:"Appointment" }}</p>
+        <p class="text-xs text-gray-500">{{ appointment.scheduled_at|date:"M d, Y H:i" }}</p>
+    </div>
+    <div>
+        <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full
+            {% if appointment.status == 'completed' %}bg-green-100 text-green-800{% else %}bg-gray-100 text-gray-800{% endif %}">
+            {{ appointment.get_status_display }}
+        </span>
+    </div>
+</div>
+{% endfor %}
+
+{% if appointments %}
+<div hx-get="{% url 'core:patient_timeline' patient.id %}?offset={{ next_offset }}"
+     hx-trigger="intersect once"
+     hx-swap="afterend">
+</div>
+{% endif %}

@@ -1,0 +1,35 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="flex justify-between items-center mb-6">
+    <div class="flex space-x-4">
+        <a href="?mine=1" class="text-sm text-indigo-600 hover:text-indigo-800">My Tasks</a>
+        <a href="?" class="text-sm text-gray-600 hover:text-gray-800">All Tasks</a>
+    </div>
+</div>
+
+<!-- Task list with auto-refresh -->
+<div id="task-list"
+     hx-get="{% url 'operations:task_inbox' %}"
+     hx-trigger="every 30s"
+     hx-swap="innerHTML">
+
+    {% if tasks %}
+    <div class="bg-white shadow overflow-hidden sm:rounded-md">
+        <ul class="divide-y divide-gray-200">
+            {% for task in tasks %}
+            {% include "operations/partials/task_row.html" %}
+            {% endfor %}
+        </ul>
+    </div>
+    {% else %}
+    <div class="text-center py-12 bg-white rounded-lg shadow">
+        <svg class="mx-auto h-12 w-12 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-6 9l2 2 4-4"></path>
+        </svg>
+        <h3 class="mt-2 text-sm font-medium text-gray-900">No pending tasks</h3>
+        <p class="mt-1 text-sm text-gray-500">Great job! All tasks have been completed.</p>
+    </div>
+    {% endif %}
+</div>
+{% endblock %}

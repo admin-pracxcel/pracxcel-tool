@@ -1,0 +1,35 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="bg-white shadow overflow-hidden sm:rounded-md">
+    <ul class="divide-y divide-gray-200">
+        {% for plan in plans %}
+        <li>
+            <a href="{% url 'operations:treatment_plan_detail' plan.id %}" class="block hover:bg-gray-50">
+                <div class="px-4 py-4 sm:px-6">
+                    <div class="flex items-center justify-between">
+                        <p class="text-sm font-medium text-indigo-600 truncate">
+                            {{ plan.title }}
+                        </p>
+                        <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full
+                            {% if plan.status == 'accepted' %}bg-green-100 text-green-800{% elif plan.status == 'sent' %}bg-blue-100 text-blue-800{% elif plan.status == 'declined' %}bg-red-100 text-red-800{% else %}bg-gray-100 text-gray-800{% endif %}">
+                            {{ plan.get_status_display }}
+                        </span>
+                    </div>
+                    <div class="mt-2 sm:flex sm:justify-between">
+                        <p class="text-sm text-gray-500">{{ plan.patient.full_name }}</p>
+                        <p class="text-sm text-gray-500">
+                            {% if plan.estimated_cost %}${{ plan.estimated_cost|floatformat:0 }}{% endif %}
+                        </p>
+                    </div>
+                </div>
+            </a>
+        </li>
+        {% empty %}
+        <li class="px-4 py-12 text-center text-gray-500">
+            No treatment plans yet.
+        </li>
+        {% endfor %}
+    </ul>
+</div>
+{% endblock %}

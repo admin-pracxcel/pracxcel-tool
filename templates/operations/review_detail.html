@@ -1,0 +1,30 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="bg-white shadow overflow-hidden sm:rounded-lg">
+    <div class="px-4 py-5 sm:px-6">
+        <h3 class="text-lg leading-6 font-medium text-gray-900">Review Request</h3>
+        <p class="mt-1 max-w-2xl text-sm text-gray-500">{{ review.patient.full_name }}</p>
+    </div>
+    <div class="border-t border-gray-200 px-4 py-5 sm:px-6">
+        <dl class="grid grid-cols-1 gap-x-4 gap-y-8 sm:grid-cols-2">
+            <div>
+                <dt class="text-sm font-medium text-gray-500">Status</dt>
+                <dd class="mt-1 text-sm text-gray-900">{{ review.get_status_display }}</dd>
+            </div>
+            <div>
+                <dt class="text-sm font-medium text-gray-500">Channel</dt>
+                <dd class="mt-1 text-sm text-gray-900">{{ review.get_channel_display }}</dd>
+            </div>
+            <div>
+                <dt class="text-sm font-medium text-gray-500">Scheduled</dt>
+                <dd class="mt-1 text-sm text-gray-900">{{ review.scheduled_at|date:"M d, Y H:i" }}</dd>
+            </div>
+            <div>
+                <dt class="text-sm font-medium text-gray-500">Sent</dt>
+                <dd class="mt-1 text-sm text-gray-900">{{ review.sent_at|date:"M d, Y H:i"|default:"-" }}</dd>
+            </div>
+        </dl>
+    </div>
+</div>
+{% endblock %}

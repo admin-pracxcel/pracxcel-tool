@@ -1,0 +1,27 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="max-w-lg mx-auto">
+    <div class="bg-white shadow sm:rounded-lg">
+        <div class="px-4 py-5 sm:p-6">
+            <h3 class="text-lg leading-6 font-medium text-gray-900">
+                Disconnect {{ integration.get_integration_type_display }}?
+            </h3>
+            <div class="mt-2 max-w-xl text-sm text-gray-500">
+                <p>This will stop syncing data from this integration. You can reconnect at any time.</p>
+            </div>
+            <div class="mt-5 flex space-x-4">
+                <form method="post">
+                    {% csrf_token %}
+                    <button type="submit" class="inline-flex items-center justify-center px-4 py-2 border border-transparent font-medium rounded-md text-red-700 bg-red-100 hover:bg-red-200 sm:text-sm">
+                        Disconnect
+                    </button>
+                </form>
+                <a href="{% url 'integrations:integration_list' %}" class="inline-flex items-center justify-center px-4 py-2 border border-gray-300 font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50 sm:text-sm">
+                    Cancel
+                </a>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

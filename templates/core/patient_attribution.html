@@ -1,0 +1,103 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="max-w-3xl">
+    <!-- Patient Info -->
+    <div class="bg-white shadow overflow-hidden sm:rounded-lg mb-6">
+        <div class="px-4 py-5 sm:px-6">
+            <h3 class="text-lg leading-6 font-medium text-gray-900">{{ patient.full_name }}</h3>
+            <p class="mt-1 max-w-2xl text-sm text-gray-500">Attribution details</p>
+        </div>
+    </div>
+
+    <!-- Current Attribution -->
+    <div class="bg-white shadow overflow-hidden sm:rounded-lg mb-6">
+        <div class="px-4 py-5 sm:px-6">
+            <h3 class="text-lg leading-6 font-medium text-gray-900">Current Attribution</h3>
+        </div>
+        <div class="border-t border-gray-200 px-4 py-5 sm:px-6">
+            {% if patient.attribution %}
+            <dl class="grid grid-cols-1 gap-x-4 gap-y-8 sm:grid-cols-2">
+                <div>
+                    <dt class="text-sm font-medium text-gray-500">Type</dt>
+                    <dd class="mt-1 text-sm text-gray-900">{{ patient.attribution.get_attribution_type_display }}</dd>
+                </div>
+                <div>
+                    <dt class="text-sm font-medium text-gray-500">Status</dt>
+                    <dd class="mt-1 text-sm text-gray-900">
+                        <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full
+                            {% if patient.attribution.status == 'auto' %}bg-green-100 text-green-800{% else %}bg-yellow-100 text-yellow-800{% endif %}">
+                            {{ patient.attribution.get_status_display }}
+                        </span>
+                    </dd>
+                </div>
+                <div>
+                    <dt class="text-sm font-medium text-gray-500">Campaign</dt>
+                    <dd class="mt-1 text-sm text-gray-900">{{ patient.attribution.campaign_name|default:"-" }}</dd>
+                </div>
+                <div>
+                    <dt class="text-sm font-medium text-gray-500">Source / Medium</dt>
+                    <dd class="mt-1 text-sm text-gray-900">{{ patient.attribution.campaign_source|default:"-" }} / {{ patient.attribution.campaign_medium|default:"-" }}</dd>
+                </div>
+                <div>
+                    <dt class="text-sm font-medium text-gray-500">First Invoice</dt>
+                    <dd class="mt-1 text-sm text-gray-900">${{ patient.attribution.first_invoice_amount|default:"-" }} on {{ patient.attribution.first_invoice_date|default:"-" }}</dd>
+                </div>
+                {% if patient.attribution.overridden_at %}
+                <div>
+                    <dt class="text-sm font-medium text-gray-500">Overridden</dt>
+                    <dd class="mt-1 text-sm text-gray-900">By {{ patient.attribution.overridden_by }} on {{ patient.attribution.overridden_at|date:"M d, Y" }}</dd>
+                </div>
+                {% endif %}
+            </dl>
+            {% else %}
+            <p class="text-sm text-gray-500">No attribution yet. Attribution is created when the first invoice is paid.</p>
+            {% endif %}
+        </div>
+    </div>
+
+    <!-- Override Form -->
+    {% if patient.attribution %}
+    <div class="bg-white shadow overflow-hidden sm:rounded-lg">
+        <div class="px-4 py-5 sm:px-6">
+            <h3 class="text-lg leading-6 font-medium text-gray-900">Manual Override</h3>
+            <p class="mt-1 text-sm text-gray-500">Override the automatic attribution if needed.</p>
+        </div>
+        <div class="border-t border-gray-200 px-4 py-5 sm:px-6">
+            <form method="post" class="space-y-4">
+                {% csrf_token %}
+                <div>
+                    <label for="attribution_type" class="block text-sm font-medium text-gray-700">Attribution Type</label>
+                    <select name="attribution_type" id="attribution_type" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm">
+                        <option value="call">Phone Call</option>
+                        <option value="marketing_touch">Marketing Touch</option>
+                        <option value="manual">Manual Entry</option>
+                        <option value="unknown">Unknown</option>
+                    </select>
+                </div>
+                <div>
+                    <label for="campaign_name" class="block text-sm font-medium text-gray-700">Campaign Name</label>
+                    <input type="text" name="campaign_name" id="campaign_name"
+                           value="{{ patient.attribution.campaign_name }}"
+                           class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm">
+                </div>
+                <div>
+                    <label for="reason" class="block text-sm font-medium text-gray-700">Reason for Override</label>
+                    <textarea name="reason" id="reason" rows="3"
+                              class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
+                              placeholder="Explain why you're overriding the attribution..."></textarea>
+                </div>
+                <div class="flex justify-end">
+                    <a href="{% url 'core:patient_detail' patient.id %}" class="bg-white py-2 px-4 border border-gray-300 rounded-md shadow-sm text-sm font-medium text-gray-700 hover:bg-gray-50">
+                        Cancel
+                    </a>
+                    <button type="submit" class="ml-3 inline-flex justify-center py-2 px-4 border border-transparent shadow-sm text-sm font-medium rounded-md text-white bg-indigo-600 hover:bg-indigo-700">
+                        Save Override
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+    {% endif %}
+</div>
+{% endblock %}

@@ -1,0 +1,62 @@
+<li id="task-{{ task.id }}">
+    <div class="px-4 py-4 sm:px-6 hover:bg-gray-50">
+        <div class="flex items-center justify-between">
+            <div class="flex items-center min-w-0">
+                <!-- Priority indicator -->
+                <span class="flex-shrink-0 w-2 h-2 rounded-full mr-3
+                    {% if task.priority == 1 %}bg-red-500{% elif task.priority == 2 %}bg-orange-500{% elif task.priority == 3 %}bg-blue-500{% else %}bg-gray-400{% endif %}">
+                </span>
+
+                <div class="min-w-0 flex-1">
+                    <a href="{% url 'operations:task_detail' task.id %}" class="text-sm font-medium text-indigo-600 hover:text-indigo-900 truncate">
+                        {{ task.title }}
+                    </a>
+                    <div class="flex mt-1">
+                        <span class="text-xs text-gray-500">{{ task.patient }}</span>
+                        <span class="mx-2 text-gray-300">|</span>
+                        <span class="text-xs text-gray-500">{{ task.get_task_type_display }}</span>
+                        {% if task.due_at %}
+                        <span class="mx-2 text-gray-300">|</span>
+                        <span class="text-xs text-gray-500">Due: {{ task.due_at|date:"M d, H:i" }}</span>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+
+            <div class="flex items-center space-x-2 ml-4">
+                <!-- Complete button -->
+                <button hx-post="{% url 'operations:task_complete' task.id %}"
+                        hx-target="#task-{{ task.id }}"
+                        hx-swap="outerHTML"
+                        class="inline-flex items-center px-2.5 py-1.5 border border-transparent text-xs font-medium rounded text-green-700 bg-green-100 hover:bg-green-200">
+                    Complete
+                </button>
+
+                <!-- Snooze button -->
+                <div x-data="{ open: false }" class="relative">
+                    <button @click="open = !open"
+                            class="inline-flex items-center px-2.5 py-1.5 border border-gray-300 text-xs font-medium rounded text-gray-700 bg-white hover:bg-gray-50">
+                        Snooze
+                    </button>
+                    <div x-show="open" @click.away="open = false"
+                         class="absolute right-0 mt-2 w-32 rounded-md shadow-lg bg-white ring-1 ring-black ring-opacity-5 z-10">
+                        <div class="py-1">
+                            <form hx-post="{% url 'operations:task_snooze' task.id %}" hx-target="#task-{{ task.id }}" hx-swap="outerHTML">
+                                <input type="hidden" name="hours" value="1">
+                                <button type="submit" class="block w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">1 hour</button>
+                            </form>
+                            <form hx-post="{% url 'operations:task_snooze' task.id %}" hx-target="#task-{{ task.id }}" hx-swap="outerHTML">
+                                <input type="hidden" name="hours" value="4">
+                                <button type="submit" class="block w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">4 hours</button>
+                            </form>
+                            <form hx-post="{% url 'operations:task_snooze' task.id %}" hx-target="#task-{{ task.id }}" hx-swap="outerHTML">
+                                <input type="hidden" name="hours" value="24">
+                                <button type="submit" class="block w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">Tomorrow</button>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</li>

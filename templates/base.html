@@ -1,0 +1,175 @@
+<!DOCTYPE html>
+<html lang="en" class="h-full bg-gray-100">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}{{ page_title|default:"Pracxcel" }}{% endblock %} | Pracxcel</title>
+
+    <!-- Tailwind CSS via CDN (replace with build in production) -->
+    <script src="https://cdn.tailwindcss.com"></script>
+
+    <!-- HTMX -->
+    <script src="https://unpkg.com/htmx.org@1.9.10"></script>
+
+    <!-- Alpine.js -->
+    <script defer src="https://unpkg.com/alpinejs@3.13.5/dist/cdn.min.js"></script>
+
+    <!-- Chart.js (for dashboard) -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+    {% block extra_head %}{% endblock %}
+</head>
+<body class="h-full">
+    <div class="min-h-full">
+        <!-- Sidebar -->
+        <div class="fixed inset-y-0 left-0 z-50 w-64 bg-gray-900">
+            <div class="flex h-16 shrink-0 items-center px-6">
+                <a href="{% url 'core:dashboard' %}" class="text-xl font-bold text-white">
+                    Pracxcel
+                </a>
+            </div>
+            <nav class="flex flex-1 flex-col px-4 py-4">
+                <ul role="list" class="flex flex-1 flex-col gap-y-1">
+                    <!-- Dashboard -->
+                    <li>
+                        <a href="{% url 'core:dashboard' %}"
+                           class="{% if request.resolver_match.url_name == 'dashboard' and request.resolver_match.app_name == 'core' %}bg-gray-800 text-white{% else %}text-gray-400 hover:bg-gray-800 hover:text-white{% endif %} group flex gap-x-3 rounded-md p-3 text-sm font-medium">
+                            <svg class="h-5 w-5 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"></path>
+                            </svg>
+                            Dashboard
+                        </a>
+                    </li>
+
+                    <!-- Tasks -->
+                    <li>
+                        <a href="{% url 'operations:task_inbox' %}"
+                           class="{% if request.resolver_match.app_name == 'operations' %}bg-gray-800 text-white{% else %}text-gray-400 hover:bg-gray-800 hover:text-white{% endif %} group flex gap-x-3 rounded-md p-3 text-sm font-medium">
+                            <svg class="h-5 w-5 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-6 9l2 2 4-4"></path>
+                            </svg>
+                            Tasks
+                        </a>
+                    </li>
+
+                    <!-- Patients -->
+                    <li>
+                        <a href="{% url 'core:patient_list' %}"
+                           class="{% if request.resolver_match.url_name == 'patient_list' or request.resolver_match.url_name == 'patient_detail' or request.resolver_match.url_name == 'patient_attribution' %}bg-gray-800 text-white{% else %}text-gray-400 hover:bg-gray-800 hover:text-white{% endif %} group flex gap-x-3 rounded-md p-3 text-sm font-medium">
+                            <svg class="h-5 w-5 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z"></path>
+                            </svg>
+                            Patients
+                        </a>
+                    </li>
+
+                    <!-- Analytics Section -->
+                    <li class="mt-6">
+                        <div class="text-xs font-semibold text-gray-500 uppercase tracking-wider px-3 mb-2">Analytics</div>
+                    </li>
+
+                    <!-- Analytics Dashboard -->
+                    <li>
+                        <a href="{% url 'analytics:dashboard' %}"
+                           class="{% if request.resolver_match.url_name == 'dashboard' and request.resolver_match.app_name == 'analytics' %}bg-gray-800 text-white{% else %}text-gray-400 hover:bg-gray-800 hover:text-white{% endif %} group flex gap-x-3 rounded-md p-3 text-sm font-medium">
+                            <svg class="h-5 w-5 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"></path>
+                            </svg>
+                            Overview
+                        </a>
+                    </li>
+
+                    <!-- Campaigns -->
+                    <li>
+                        <a href="{% url 'analytics:campaign_report' %}"
+                           class="{% if request.resolver_match.url_name == 'campaign_report' %}bg-gray-800 text-white{% else %}text-gray-400 hover:bg-gray-800 hover:text-white{% endif %} group flex gap-x-3 rounded-md p-3 text-sm font-medium">
+                            <svg class="h-5 w-5 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 3.055A9.001 9.001 0 1020.945 13H11V3.055z"></path>
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20.488 9H15V3.512A9.025 9.025 0 0120.488 9z"></path>
+                            </svg>
+                            Campaigns
+                        </a>
+                    </li>
+
+                    <!-- Attribution -->
+                    <li>
+                        <a href="{% url 'analytics:attribution_report' %}"
+                           class="{% if request.resolver_match.url_name == 'attribution_report' %}bg-gray-800 text-white{% else %}text-gray-400 hover:bg-gray-800 hover:text-white{% endif %} group flex gap-x-3 rounded-md p-3 text-sm font-medium">
+                            <svg class="h-5 w-5 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6"></path>
+                            </svg>
+                            Attribution
+                        </a>
+                    </li>
+
+                    <!-- Settings Section -->
+                    <li class="mt-6">
+                        <div class="text-xs font-semibold text-gray-500 uppercase tracking-wider px-3 mb-2">Settings</div>
+                    </li>
+
+                    <!-- Integrations -->
+                    <li>
+                        <a href="{% url 'integrations:integration_list' %}"
+                           class="{% if request.resolver_match.app_name == 'integrations' %}bg-gray-800 text-white{% else %}text-gray-400 hover:bg-gray-800 hover:text-white{% endif %} group flex gap-x-3 rounded-md p-3 text-sm font-medium">
+                            <svg class="h-5 w-5 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 4a2 2 0 114 0v1a1 1 0 001 1h3a1 1 0 011 1v3a1 1 0 01-1 1h-1a2 2 0 100 4h1a1 1 0 011 1v3a1 1 0 01-1 1h-3a1 1 0 01-1-1v-1a2 2 0 10-4 0v1a1 1 0 01-1 1H7a1 1 0 01-1-1v-3a1 1 0 00-1-1H4a2 2 0 110-4h1a1 1 0 001-1V7a1 1 0 011-1h3a1 1 0 001-1V4z"></path>
+                            </svg>
+                            Integrations
+                        </a>
+                    </li>
+
+                    <!-- Spacer -->
+                    <li class="mt-auto"></li>
+
+                    <!-- User -->
+                    {% if user.is_authenticated %}
+                    <li class="border-t border-gray-800 pt-4 mt-4">
+                        <div class="flex items-center gap-x-3 px-3 py-2 text-sm text-gray-400">
+                            <div class="h-8 w-8 rounded-full bg-gray-700 flex items-center justify-center text-white font-medium">
+                                {{ user.username|slice:":1"|upper }}
+                            </div>
+                            <div class="flex-1 min-w-0">
+                                <p class="truncate font-medium text-white">{{ user.username }}</p>
+                            </div>
+                            <a href="{% url 'admin:logout' %}" class="text-gray-400 hover:text-white" title="Logout">
+                                <svg class="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"></path>
+                                </svg>
+                            </a>
+                        </div>
+                    </li>
+                    {% endif %}
+                </ul>
+            </nav>
+        </div>
+
+        <!-- Main content -->
+        <div class="pl-64">
+            <!-- Top bar -->
+            <div class="sticky top-0 z-40 flex h-16 shrink-0 items-center gap-x-4 border-b border-gray-200 bg-white px-6 shadow-sm">
+                {% if page_title %}
+                <h1 class="text-lg font-semibold text-gray-900">{{ page_title }}</h1>
+                {% endif %}
+            </div>
+
+            <main class="py-6 px-6">
+                <!-- Messages -->
+                {% if messages %}
+                <div class="mb-4">
+                    {% for message in messages %}
+                    <div class="rounded-md p-4 mb-2 {% if message.tags == 'error' %}bg-red-50 text-red-800{% elif message.tags == 'success' %}bg-green-50 text-green-800{% else %}bg-blue-50 text-blue-800{% endif %}">
+                        {{ message }}
+                    </div>
+                    {% endfor %}
+                </div>
+                {% endif %}
+
+                <!-- Page content -->
+                {% block content %}{% endblock %}
+            </main>
+        </div>
+    </div>
+
+    {% block extra_js %}{% endblock %}
+</body>
+</html>
